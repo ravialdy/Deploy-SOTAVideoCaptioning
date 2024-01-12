@@ -8,3 +8,5 @@ CUDA_VISIBLE_DEVICES=0 python -m torch.distributed.launch --nproc_per_node=8   -
 --train_video_sample_num 4 \
 --test_video_sample_num 8  \
 --save_best true \
+--zero_shot \
+--checkpoint $checkpoint_save_path(.pt)

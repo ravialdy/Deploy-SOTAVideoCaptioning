@@ -480,8 +480,6 @@ class VALORModel(VALORPreTrainedModel):
         return audio_output
 
 
-
-
     def get_multimodal_forward_input_video(self, video_output):
         b,n,x,c = video_output.shape
         if self.hidden_trans_video_multimodal is not None:
@@ -757,6 +755,7 @@ class AudioEmbeddings(nn.Module):
         audio_pos_ids = list(range(self.token_length_per_frame + 1))
         audio_pos_ids = torch.tensor(audio_pos_ids, dtype=torch.long, device=audio_spectrograms.device).unsqueeze(0)
         position_embeddings = self.position_embeddings(audio_pos_ids)
+        # import pdb; pdb.set_trace()
         embeddings = audio_tokens + position_embeddings 
         embeddings = self.dropout(embeddings)
         return embeddings

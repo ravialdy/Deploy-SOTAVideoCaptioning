@@ -3,13 +3,14 @@ from typing import Sequence
 import torch
 from torch import nn
 from torch.nn import functional as F
+from apex.normalization.fused_layer_norm import FusedLayerNorm as LayerNorm
 import json
 import torch.distributed as dist
-from model.modeling import VALORModel, VALORPreTrainedModel
+from .modeling import VALORModel, VALORPreTrainedModel
 import ipdb
 import numpy as np
 import random
-from model.transformer import MultiHeadAttention
+from .transformer import MultiHeadAttention
 from utils.logger import LOGGER
 import yaml
 from torchvision.transforms import *
@@ -21,7 +22,11 @@ import os
 from utils.distributed import any_broadcast
 from utils.distributed import all_gather_list
 from utils.distributed import ddp_allgather_with_grads, ddp_allgather
-from apex.normalization.fused_layer_norm import FusedLayerNorm
+from apex.normalization.fused_layer_norm import FusedLayerNorm 
+
+##ss
+##ss
+from .transformer import GELU
 
 
 class Contra_head(nn.Module):
@@ -116,14 +121,14 @@ class VALOR(VALORModel):
 
         
 
-    def forward(self, batch, task, compute_loss=True):
+    def forward(self, batch, task, compute_loss=True, inference_only=False):
 
         if task.startswith('pt'):
             return self.forward_pt(batch, task, compute_loss=compute_loss)
         elif task.startswith('ret'):
             return self.forward_ret(batch, task, compute_loss=compute_loss)
         elif task.startswith('cap'):
-            return self.forward_cap(batch, task, compute_loss=compute_loss)
+            return self.forward_cap(batch, task, compute_loss=compute_loss, inference_only=inference_only)
         elif task.startswith('qa'):
             return self.forward_qa(batch, task, compute_loss=compute_loss)
 
@@ -704,9 +709,10 @@ class VALOR(VALORModel):
 
             return evaluation_dict
 
-    def forward_cap(self, batch, task, compute_loss=True):
+    def forward_cap(self, batch, task, inference_only, compute_loss=True):
         task = task.split('%')[1:]
-        batch['txt_tokens'] = self.get_text_tokens(batch['txt_tokens'], self.multimodal_encoder_type)
+        if not inference_only:
+            batch['txt_tokens'] = self.get_text_tokens(batch['txt_tokens'], self.multimodal_encoder_type)
         
         if compute_loss:
             if self.scst_finetuning:
