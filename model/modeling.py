@@ -167,8 +167,8 @@ class TokenMasker(nn.Module):
         #             tokens[i][j] = self.mask_token  ### e-6 have no idea why too much                         
                     
 
-        tokens =torch.from_numpy(tokens).long().cuda()
-        labels =torch.from_numpy(labels).long().cuda()
+        tokens =torch.from_numpy(tokens).long().cuda(1)
+        labels =torch.from_numpy(labels).long().cuda(1)
         
         return tokens, labels
 
@@ -221,8 +221,8 @@ class TokenMaskerWoReplace(nn.Module):
         #             tokens[i][j] = self.mask_token  ### e-6 have no idea why too much                         
                     
 
-        tokens =torch.from_numpy(tokens).long().cuda()
-        labels =torch.from_numpy(labels).long().cuda()
+        tokens =torch.from_numpy(tokens).long().cuda(1)
+        labels =torch.from_numpy(labels).long().cuda(1)
         
         return tokens, labels
 
@@ -338,7 +338,7 @@ class VALORModel(VALORPreTrainedModel):
 
         self.construct_text_model(config)
         
-        self.video_type_embeddings = nn.Parameter(0.02 * torch.randn(1, 1, self.multimodal_dim)) 
+        self.video_type_embeddings = nn.Parameter(0.02 * torch.randn(1, 1, self.multimodal_dim))
         self.audio_type_embeddings = nn.Parameter(0.02 * torch.randn(1, 1, self.multimodal_dim)) 
         self.video_frame_embedding = nn.Parameter(0.02 * torch.randn(1, 32, self.multimodal_dim))
         self.audio_frame_embedding = nn.Parameter(0.02 * torch.randn(1, 32, self.multimodal_dim))  
@@ -365,7 +365,7 @@ class VALORModel(VALORPreTrainedModel):
             sentence = self.clip_tokenizer.encode(sentence)
             task_prompt = [self.sot_token] + sentence + [self.eot_token]
         if not cls_prompt:
-            task_prompt = torch.tensor(task_prompt).unsqueeze(0).expand(batch_size,-1).long().cuda()
+            task_prompt = torch.tensor(task_prompt).unsqueeze(0).expand(batch_size,-1).long().cuda(1)
         return task_prompt
       
 
@@ -485,7 +485,8 @@ class VALORModel(VALORPreTrainedModel):
         if self.hidden_trans_video_multimodal is not None:
             video_output = self.hidden_trans_video_multimodal(video_output)  
         video_output =  video_output + self.video_frame_embedding[:,:video_output.shape[1],:].unsqueeze(-2)
-        video_output = video_output.reshape(b,-1,self.multimodal_dim) 
+        video_output = video_output.reshape(b,-1,self.multimodal_dim)
+        # import pdb; pdb.set_trace() 
         video_output =  video_output + self.video_type_embeddings
 
         return video_output
@@ -747,6 +748,7 @@ class AudioEmbeddings(nn.Module):
 
     def forward(self, audio_spectrograms):  ### shape Bxn_sample_128x512
         
+        # import pdb; pdb.set_trace()
         audio_spectrograms = self.first_conv(audio_spectrograms.unsqueeze(1))
         b,c,_,_=audio_spectrograms.shape
         audio_tokens = audio_spectrograms.permute(0,2,3,1).reshape(b,-1,c)        
@@ -755,7 +757,6 @@ class AudioEmbeddings(nn.Module):
         audio_pos_ids = list(range(self.token_length_per_frame + 1))
         audio_pos_ids = torch.tensor(audio_pos_ids, dtype=torch.long, device=audio_spectrograms.device).unsqueeze(0)
         position_embeddings = self.position_embeddings(audio_pos_ids)
-        # import pdb; pdb.set_trace()
         embeddings = audio_tokens + position_embeddings 
         embeddings = self.dropout(embeddings)
         return embeddings

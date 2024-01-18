@@ -300,8 +300,8 @@ class VALOR(VALORModel):
                 contra_loss_atv = None 
                 if self.contra_type == 'fine':
                     if 'tv' in contra_task:
-                        maskA = (txt_tokens_contra !=0).long().cuda()
-                        maskB = torch.ones(*feat_v.shape[:2]).long().cuda()
+                        maskA = (txt_tokens_contra !=0).long().cuda(1)
+                        maskB = torch.ones(*feat_v.shape[:2]).long().cuda(1)
                         weightA = self.fine_weight_mapper['text'](feat_t).squeeze(2)
                         weightB = self.fine_weight_mapper['video'](feat_v).squeeze(2)
                         score_matrix_tv = self.compute_fine_matrix(feat_t, feat_v, maskA, maskB, weightA, weightB)
@@ -310,9 +310,9 @@ class VALOR(VALORModel):
                     if 'tva' in contra_task:
                         
                         if self.late_fusion:
-                            maskt = (txt_tokens_contra !=0).long().cuda()
-                            maskv = torch.ones(*feat_v.shape[:2]).long().cuda()
-                            maska = torch.ones(*feat_a.shape[:2]).long().cuda()
+                            maskt = (txt_tokens_contra !=0).long().cuda(1)
+                            maskv = torch.ones(*feat_v.shape[:2]).long().cuda(1)
+                            maska = torch.ones(*feat_a.shape[:2]).long().cuda(1)
                             weightt = torch.ones_like(feat_t[:,:,0])
                             weightv = torch.ones_like(feat_v[:,:,0])
                             weighta = torch.ones_like(feat_a[:,:,0])
@@ -322,8 +322,8 @@ class VALOR(VALORModel):
                         else:
                             feat_va = torch.cat((feat_v,feat_a),dim=1)
 
-                            maskA = (txt_tokens_contra !=0).long().cuda()
-                            maskB = torch.ones(*feat_va.shape[:2]).long().cuda()
+                            maskA = (txt_tokens_contra !=0).long().cuda(1)
+                            maskB = torch.ones(*feat_va.shape[:2]).long().cuda(1)
                             if self.fineweight_type == 'none':
                                 weightA = torch.ones_like(feat_t[:,:,0])
                                 weightB = torch.cat(torch.ones_like(feat_v[:,:,0]),torch.ones_like(feat_v[:,:,0]),dim=1)
@@ -336,8 +336,8 @@ class VALOR(VALORModel):
                        
                 
                     if 'ta' in contra_task:
-                        maskA = (txt_tokens_contra !=0).long().cuda()
-                        maskB = torch.ones(*feat_a.shape[:2]).long().cuda()
+                        maskA = (txt_tokens_contra !=0).long().cuda(1)
+                        maskB = torch.ones(*feat_a.shape[:2]).long().cuda(1)
                         weightA = self.fine_weight_mapper['text'](feat_t).squeeze(2)
                         weightB = self.fine_weight_mapper['audio'](feat_a).squeeze(2)
                         score_matrix_ta = self.compute_fine_matrix(feat_t, feat_a, maskA, maskB, weightA, weightB)
@@ -354,7 +354,7 @@ class VALOR(VALORModel):
 
                     if 'vta' in contra_task:
                         maskA = torch.ones_like(feat_v[:,:,0])
-                        maskB = torch.cat(((txt_tokens_contra !=0).long().cuda(), torch.ones_like(feat_a[:,:,0])),dim=1)
+                        maskB = torch.cat(((txt_tokens_contra !=0).long().cuda(1), torch.ones_like(feat_a[:,:,0])),dim=1)
                         feat_ta = torch.cat((feat_t,feat_a),dim=1)
                         weightA = self.fine_weight_mapper['video'](feat_v).squeeze(2)
                         weightB = torch.cat((self.fine_weight_mapper['text'](feat_t).squeeze(2),self.fine_weight_mapper['audio'](feat_a).squeeze(2)),dim=1)
@@ -363,7 +363,7 @@ class VALOR(VALORModel):
 
                     if 'atv' in contra_task:
                         maskA = torch.ones_like(feat_a[:,:,0])
-                        maskB = torch.cat(((txt_tokens_contra !=0).long().cuda(), torch.ones_like(feat_v[:,:,0])),dim=1)
+                        maskB = torch.cat(((txt_tokens_contra !=0).long().cuda(1), torch.ones_like(feat_v[:,:,0])),dim=1)
                         feat_tv = torch.cat((feat_t,feat_v),dim=1)
                         weightA = self.fine_weight_mapper['audio'](feat_a).squeeze(2)
                         weightB = torch.cat((self.fine_weight_mapper['text'](feat_t).squeeze(2),self.fine_weight_mapper['video'](feat_v).squeeze(2)),dim=1)
@@ -602,8 +602,8 @@ class VALOR(VALORModel):
             loss_dict = {}
             if self.contra_type == 'fine':
                 if 'tv' in task:
-                    maskA = (txt_tokens !=0).long().cuda()
-                    maskB = torch.ones(*feat_v.shape[:2]).long().cuda()
+                    maskA = (txt_tokens !=0).long().cuda(1)
+                    maskB = torch.ones(*feat_v.shape[:2]).long().cuda(1)
                     weightA = self.fine_weight_mapper['text'](feat_t).squeeze(2)
                     weightB = self.fine_weight_mapper['video'](feat_v).squeeze(2)
                     score_matrix_tv = self.compute_fine_matrix(feat_t, feat_v, maskA, maskB, weightA, weightB)
@@ -611,9 +611,9 @@ class VALOR(VALORModel):
                     
                 if 'tva' in task:
                     if self.late_fusion:
-                        maskt = (txt_tokens !=0).long().cuda()
-                        maskv = torch.ones(*feat_v.shape[:2]).long().cuda()
-                        maska = torch.ones(*feat_a.shape[:2]).long().cuda()
+                        maskt = (txt_tokens !=0).long().cuda(1)
+                        maskv = torch.ones(*feat_v.shape[:2]).long().cuda(1)
+                        maska = torch.ones(*feat_a.shape[:2]).long().cuda(1)
                         weightt = torch.ones_like(feat_t[:,:,0])
                         weightv = torch.ones_like(feat_v[:,:,0])
                         weighta = torch.ones_like(feat_a[:,:,0])
@@ -623,8 +623,8 @@ class VALOR(VALORModel):
                     else:
 
                         feat_va = torch.cat((feat_v,feat_a),dim=1)
-                        maskA = (txt_tokens !=0).long().cuda()
-                        maskB = torch.ones(*feat_va.shape[:2]).long().cuda()
+                        maskA = (txt_tokens !=0).long().cuda(1)
+                        maskB = torch.ones(*feat_va.shape[:2]).long().cuda(1)
                         if self.fineweight_type == 'none':
                             weightA = torch.ones_like(feat_t[:,:,0])
                             weightB = torch.cat((torch.ones_like(feat_v[:,:,0]),torch.ones_like(feat_a[:,:,0])),dim=1)
@@ -638,8 +638,8 @@ class VALOR(VALORModel):
                             
                 
                 if 'ta' in task:
-                    maskA = (txt_tokens !=0).long().cuda()
-                    maskB = torch.ones(*feat_a.shape[:2]).long().cuda()
+                    maskA = (txt_tokens !=0).long().cuda(1)
+                    maskB = torch.ones(*feat_a.shape[:2]).long().cuda(1)
                     weightA = self.fine_weight_mapper['text'](feat_t).squeeze(2)
                     weightB = self.fine_weight_mapper['audio'](feat_a).squeeze(2)
                     score_matrix_ta = self.compute_fine_matrix(feat_t, feat_a, maskA, maskB, weightA, weightB)
@@ -655,7 +655,7 @@ class VALOR(VALORModel):
 
                 if 'vta' in task:
                     maskA = torch.ones_like(feat_v[:,:,0])
-                    maskB = torch.cat(((txt_tokens !=0).long().cuda(), torch.ones_like(feat_a[:,:,0])),dim=1)
+                    maskB = torch.cat(((txt_tokens !=0).long().cuda(1), torch.ones_like(feat_a[:,:,0])),dim=1)
                     feat_ta = torch.cat((feat_t,feat_a),dim=1)
                     weightA = self.fine_weight_mapper['video'](feat_v).squeeze(2)
                     weightB = torch.cat((self.fine_weight_mapper['text'](feat_t).squeeze(2),self.fine_weight_mapper['audio'](feat_a).squeeze(2)),dim=1)
@@ -664,7 +664,7 @@ class VALOR(VALORModel):
 
                 if 'atv' in task:
                     maskA = torch.ones_like(feat_a[:,:,0])
-                    maskB = torch.cat(((txt_tokens !=0).long().cuda(), torch.ones_like(feat_v[:,:,0])),dim=1)
+                    maskB = torch.cat(((txt_tokens !=0).long().cuda(1), torch.ones_like(feat_v[:,:,0])),dim=1)
                     feat_tv = torch.cat((feat_t,feat_v),dim=1)
                     weightA = self.fine_weight_mapper['audio'](feat_a).squeeze(2)
                     weightB = torch.cat((self.fine_weight_mapper['text'](feat_t).squeeze(2),self.fine_weight_mapper['video'](feat_v).squeeze(2)),dim=1)
@@ -759,7 +759,7 @@ class VALOR(VALORModel):
 
             self.update_alpha(reward_sample, reward_greedy)
             rewards = reward_sample - reward_greedy * self.get_alpha()
-            rewards = torch.from_numpy(rewards).float().cuda()
+            rewards = torch.from_numpy(rewards).float().cuda(1)
             caption_loss_tv = self.reward_loss(evaluation_dict_sample['generated_sequences_t_v'], logprobs_t_v_sample, rewards)    
             loss_dict['caption_loss_tv'] = caption_loss_tv
            
@@ -772,7 +772,7 @@ class VALOR(VALORModel):
 
             self.update_alpha(reward_sample, reward_greedy)
             rewards = reward_sample - reward_greedy * self.get_alpha()
-            rewards = torch.from_numpy(rewards).float().cuda()
+            rewards = torch.from_numpy(rewards).float().cuda(1)
             caption_loss_tva = self.reward_loss(evaluation_dict_sample['generated_sequences_t_va'], logprobs_t_va_sample, rewards)    
             loss_dict['caption_loss_tva'] = caption_loss_tva
 
@@ -784,7 +784,7 @@ class VALOR(VALORModel):
             reward_sample = self.scorer(batch_ids, generated_sequences_t_a_sample)
             self.update_alpha(reward_sample, reward_greedy)
             rewards = reward_sample - reward_greedy * self.get_alpha()
-            rewards = torch.from_numpy(rewards).float().cuda()
+            rewards = torch.from_numpy(rewards).float().cuda(1)
             caption_loss_ta = self.reward_loss(evaluation_dict_sample['generated_sequences_t_a'], logprobs_t_a_sample, rewards)    
             loss_dict['caption_loss_ta'] = caption_loss_ta
 
@@ -923,6 +923,7 @@ class VALOR(VALORModel):
 
         
         if 'v' in ''.join(task):
+            # import pdb; pdb.set_trace()
             video_output = self.forward_video_encoder(video_pixels)
             video_input = self.get_multimodal_forward_input_video(video_output) 
         if 'a' in ''.join(task):
@@ -990,9 +991,9 @@ class VALOR(VALORModel):
         iteration=False
         max_generation_len = self.max_generation_len
         batch_size = self.get_batch_size(batch)
-        sents = torch.zeros((batch_size, max_generation_len), dtype=torch.long).fill_(self.eos_token).cuda()
-        logprobs = torch.zeros(batch_size, max_generation_len).cuda()
-        unfinished = torch.ones(batch_size, dtype=torch.bool).cuda()
+        sents = torch.zeros((batch_size, max_generation_len), dtype=torch.long).fill_(self.eos_token).cuda(1)
+        logprobs = torch.zeros(batch_size, max_generation_len).cuda(1)
+        unfinished = torch.ones(batch_size, dtype=torch.bool).cuda(1)
 
         state = None
         cache = {'key':{},'value':{}}
@@ -1031,12 +1032,12 @@ class VALOR(VALORModel):
     def get_logits(self, batch, state, task, cache, cache_first=False):
         batch_size = self.get_batch_size(batch)
         if self.caption_type == 'unimlm':
-            masked_tokens = torch.zeros(batch_size,1, dtype = torch.long).cuda().fill_(self.text_mask_token)
-            bos_token = torch.zeros(batch_size,1, dtype = torch.long).cuda().fill_(self.bos_token)
+            masked_tokens = torch.zeros(batch_size,1, dtype = torch.long).cuda(1).fill_(self.text_mask_token)
+            bos_token = torch.zeros(batch_size,1, dtype = torch.long).cuda(1).fill_(self.bos_token)
             txt_tokens = torch.cat((state,masked_tokens), dim=1 ) if state is not None else masked_tokens
             txt_tokens = torch.cat((bos_token,txt_tokens), dim=1 )
         elif self.caption_type == 'lm':
-            bos_token = torch.zeros(batch_size,1, dtype = torch.long).cuda().fill_(self.bos_token)
+            bos_token = torch.zeros(batch_size,1, dtype = torch.long).cuda(1).fill_(self.bos_token)
             txt_tokens = torch.cat((bos_token,state), dim=1 ) if state is not None else bos_token
         
         batch['txt_tokens'] = txt_tokens
@@ -1060,10 +1061,10 @@ class VALOR(VALORModel):
 
         beam_size = self.beam_size
         batch_size = self.get_batch_size(batch)
-        seq_logprob = torch.zeros((batch_size, 1, 1)).cuda()
+        seq_logprob = torch.zeros((batch_size, 1, 1)).cuda(1)
         log_probs = []
         selected_words = None
-        seq_mask = torch.ones((batch_size, beam_size, 1)).cuda()
+        seq_mask = torch.ones((batch_size, beam_size, 1)).cuda(1)
 
         state = None
         cache = {'key':{},'value':{},'attn_masks':None}
@@ -1205,7 +1206,7 @@ class VALOR(VALORModel):
         for i in range(len(label_tokens)):
             for j in range(len(label_tokens[i])):
                 output[i][j] = label_tokens[i][j]
-        output = output.cuda()
+        output = output.cuda(1)
         return output
 
 

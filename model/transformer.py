@@ -72,6 +72,7 @@ class TransformerLayer(nn.Module):
     
     def forward_prenorm(self, hidden_states, attention_mask):
         residual = hidden_states
+        # import pdb; pdb.set_trace() 
         hidden_states = self.layernorm1(hidden_states)
         attention_output = self.attention(hidden_states, hidden_states, hidden_states, attention_mask)
         hidden_states = residual + self.dropout(attention_output)

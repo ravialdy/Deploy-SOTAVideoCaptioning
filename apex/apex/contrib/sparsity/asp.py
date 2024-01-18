@@ -161,7 +161,7 @@ class ASP:
                 if mask.sum() < mask.numel(): # when recalculating masks
                     # restore dense parameter if allow_recompute_mask is enabled
                     assert (pruned is not None), "Unable to restore dense parameter because allow_recompute_mask == False"
-                    p.add_(pruned.cuda())
+                    p.add_(pruned.cuda(1))
 
                 mask.set_(cls.__calculate_mask(p))
 
@@ -181,7 +181,7 @@ class ASP:
             for module_name, module, p_name, p, mask, pruned in cls.__sparse_parameters:
                 if mask.sum() < mask.numel():
                     assert (pruned is not None), "Unable to restore dense parameter because allow_recompute_mask == False"
-                    p.add_(pruned.cuda())
+                    p.add_(pruned.cuda(1))
                     mask.fill_(1)
                     pruned.zero_()
                     if cls.__verbosity >= 2:

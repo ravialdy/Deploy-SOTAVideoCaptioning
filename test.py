@@ -294,8 +294,8 @@ def validate_ret(model, val_loader, task_str, opts, global_step):
     
         if opts.contra_type == 'fine':
             if 'tv' in task:
-                maskA = (txt_tokens !=0).long().cuda()
-                maskB = torch.ones(*feat_v.shape[:2]).long().cuda()
+                maskA = (txt_tokens !=0).long().cuda(1)
+                maskB = torch.ones(*feat_v.shape[:2]).long().cuda(1)
 
                 weightA = get_model_attr(model,'fine_weight_mapper')['text'](feat_t).squeeze(2)
                 weightB = get_model_attr(model,'fine_weight_mapper')['video'](feat_v).squeeze(2)
@@ -306,9 +306,9 @@ def validate_ret(model, val_loader, task_str, opts, global_step):
 
             if 'tva' in task:
                 if opts.late_fusion:
-                    maskt = (txt_tokens !=0).long().cuda()
-                    maskv = torch.ones(*feat_v.shape[:2]).long().cuda()
-                    maska = torch.ones(*feat_a.shape[:2]).long().cuda()
+                    maskt = (txt_tokens !=0).long().cuda(1)
+                    maskv = torch.ones(*feat_v.shape[:2]).long().cuda(1)
+                    maska = torch.ones(*feat_a.shape[:2]).long().cuda(1)
                     weightt = torch.ones_like(feat_t[:,:,0])
                     weightv = torch.ones_like(feat_v[:,:,0])
                     weighta = torch.ones_like(feat_a[:,:,0])
@@ -318,8 +318,8 @@ def validate_ret(model, val_loader, task_str, opts, global_step):
                 else:
                    
                     feat_va = torch.cat((feat_v,feat_a),dim=1)
-                    maskA = (txt_tokens !=0).long().cuda()
-                    maskB = torch.ones(*feat_va.shape[:2]).long().cuda()
+                    maskA = (txt_tokens !=0).long().cuda(1)
+                    maskB = torch.ones(*feat_va.shape[:2]).long().cuda(1)
                     if opts.fineweight_type == 'none':
                         weightA = torch.ones_like(feat_t[:,:,0])
                         weightB = torch.cat((torch.ones_like(feat_v[:,:,0]),torch.ones_like(feat_a[:,:,0])),dim=1)
@@ -336,8 +336,8 @@ def validate_ret(model, val_loader, task_str, opts, global_step):
             
 
             if 'ta' in task:
-                maskA = (txt_tokens !=0).long().cuda()
-                maskB = torch.ones(*feat_a.shape[:2]).long().cuda()
+                maskA = (txt_tokens !=0).long().cuda(1)
+                maskB = torch.ones(*feat_a.shape[:2]).long().cuda(1)
                 weightA = get_model_attr(model,'fine_weight_mapper')['text'](feat_t).squeeze(2)
                 weightB = get_model_attr(model,'fine_weight_mapper')['audio'](feat_a).squeeze(2)
                 score_matrix_t_a = get_model_attr(model,'compute_fine_matrix')(feat_t, feat_a, maskA, maskB, weightA, weightB)
@@ -360,7 +360,7 @@ def validate_ret(model, val_loader, task_str, opts, global_step):
 
             if 'vta' in task:
                 maskA = torch.ones_like(feat_v[:,:,0])
-                maskB = torch.cat(((txt_tokens !=0).long().cuda(), torch.ones_like(feat_a[:,:,0])),dim=1)
+                maskB = torch.cat(((txt_tokens !=0).long().cuda(1), torch.ones_like(feat_a[:,:,0])),dim=1)
                 feat_ta = torch.cat((feat_t,feat_a),dim=1)
                 weightA = get_model_attr(model,'fine_weight_mapper')['video'](feat_v).squeeze(2)
                 weightB = torch.cat((get_model_attr(model,'fine_weight_mapper')['text'](feat_t).squeeze(2),get_model_attr(model,'fine_weight_mapper')['audio'](feat_a).squeeze(2)),dim=1)
@@ -371,7 +371,7 @@ def validate_ret(model, val_loader, task_str, opts, global_step):
 
             if 'atv' in task:
                 maskA = torch.ones_like(feat_a[:,:,0])
-                maskB = torch.cat(((txt_tokens !=0).long().cuda(), torch.ones_like(feat_v[:,:,0])),dim=1)
+                maskB = torch.cat(((txt_tokens !=0).long().cuda(1), torch.ones_like(feat_v[:,:,0])),dim=1)
                 feat_tv = torch.cat((feat_t,feat_v),dim=1)
                 weightA = get_model_attr(model,'fine_weight_mapper')['audio'](feat_a).squeeze(2)
                 weightB = torch.cat((get_model_attr(model,'fine_weight_mapper')['text'](feat_t).squeeze(2),get_model_attr(model,'fine_weight_mapper')['video'](feat_v).squeeze(2)),dim=1)
@@ -559,8 +559,8 @@ def validate_pt(model, val_loader, task, opts, global_step):
         if dist.get_rank() == 0:
             if opts.contra_type == 'fine':
                 if 'tv' in contra_task:
-                    maskA = (txt_tokens !=0).long().cuda()
-                    maskB = torch.ones(*feat_v.shape[:2]).long().cuda()
+                    maskA = (txt_tokens !=0).long().cuda(1)
+                    maskB = torch.ones(*feat_v.shape[:2]).long().cuda(1)
                     weightA = get_model_attr(model,'fine_weight_mapper')['text'](feat_t).squeeze(2)
                     weightB = get_model_attr(model,'fine_weight_mapper')['video'](feat_v).squeeze(2)
                     score_matrix_t_v = get_model_attr(model,'compute_fine_matrix')(feat_t, feat_v, maskA, maskB, weightA, weightB)
@@ -569,9 +569,9 @@ def validate_pt(model, val_loader, task, opts, global_step):
 
                 if 'tva' in contra_task:
                     if opts.late_fusion:
-                        maskt = (txt_tokens !=0).long().cuda()
-                        maskv = torch.ones(*feat_v.shape[:2]).long().cuda()
-                        maska = torch.ones(*feat_a.shape[:2]).long().cuda()
+                        maskt = (txt_tokens !=0).long().cuda(1)
+                        maskv = torch.ones(*feat_v.shape[:2]).long().cuda(1)
+                        maska = torch.ones(*feat_a.shape[:2]).long().cuda(1)
                         weightt = torch.ones_like(feat_t[:,:,0])
                         weightv = torch.ones_like(feat_v[:,:,0])
                         weighta = torch.ones_like(feat_a[:,:,0])
@@ -580,8 +580,8 @@ def validate_pt(model, val_loader, task, opts, global_step):
 
                     else:
                         feat_va = torch.cat((feat_v,feat_a),dim=1)
-                        maskA = (txt_tokens !=0).long().cuda()
-                        maskB = torch.ones(*feat_va.shape[:2]).long().cuda()
+                        maskA = (txt_tokens !=0).long().cuda(1)
+                        maskB = torch.ones(*feat_va.shape[:2]).long().cuda(1)
                         if opts.fineweight_type == 'none':
                             weightA = torch.ones_like(feat_t[:,:,0])
                             weightB = torch.cat((torch.ones_like(feat_v[:,:,0]),torch.ones_like(feat_a[:,:,0])),dim=1)
@@ -596,8 +596,8 @@ def validate_pt(model, val_loader, task, opts, global_step):
 
                 
                 if 'ta' in contra_task:
-                    maskA = (txt_tokens !=0).long().cuda()
-                    maskB = torch.ones(*feat_a.shape[:2]).long().cuda()
+                    maskA = (txt_tokens !=0).long().cuda(1)
+                    maskB = torch.ones(*feat_a.shape[:2]).long().cuda(1)
                     weightA = get_model_attr(model,'fine_weight_mapper')['text'](feat_t).squeeze(2)
                     weightB = get_model_attr(model,'fine_weight_mapper')['audio'](feat_a).squeeze(2)
                     score_matrix_t_a = get_model_attr(model,'compute_fine_matrix')(feat_t, feat_a, maskA, maskB, weightA, weightB)
@@ -617,7 +617,7 @@ def validate_pt(model, val_loader, task, opts, global_step):
 
                 if 'vta' in task:
                     maskA = torch.ones_like(feat_v[:,:,0])
-                    maskB = torch.cat(((txt_tokens !=0).long().cuda(), torch.ones_like(feat_a[:,:,0])),dim=1)
+                    maskB = torch.cat(((txt_tokens !=0).long().cuda(1), torch.ones_like(feat_a[:,:,0])),dim=1)
                     feat_ta = torch.cat((feat_t,feat_a),dim=1)
                     weightA = get_model_attr(model,'fine_weight_mapper')['video'](feat_v).squeeze(2)
                     weightB = torch.cat((get_model_attr(model,'fine_weight_mapper')['text'](feat_t).squeeze(2),get_model_attr(model,'fine_weight_mapper')['audio'](feat_a).squeeze(2)),dim=1)
@@ -628,7 +628,7 @@ def validate_pt(model, val_loader, task, opts, global_step):
 
                 if 'atv' in task:
                     maskA = torch.ones_like(feat_a[:,:,0])
-                    maskB = torch.cat(((txt_tokens !=0).long().cuda(), torch.ones_like(feat_v[:,:,0])),dim=1)
+                    maskB = torch.cat(((txt_tokens !=0).long().cuda(1), torch.ones_like(feat_v[:,:,0])),dim=1)
                     feat_tv = torch.cat((feat_t,feat_v),dim=1)
                     weightA = get_model_attr(model,'fine_weight_mapper')['audio'](feat_a).squeeze(2)
                     weightB = torch.cat((get_model_attr(model,'fine_weight_mapper')['text'](feat_t).squeeze(2),get_model_attr(model,'fine_weight_mapper')['video'](feat_v).squeeze(2)),dim=1)

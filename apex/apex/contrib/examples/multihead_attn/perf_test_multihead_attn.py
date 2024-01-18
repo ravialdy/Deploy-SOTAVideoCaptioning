@@ -46,7 +46,7 @@ for idx in range(0, args.layers) :
             attn_layers.append(SelfMultiheadAttn(args.hidden_dim, args.heads, dropout=0.1, bias=args.biases, include_norm_add=args.norm_add, impl='default'))
         else :
             attn_layers.append(SelfMultiheadAttn(args.hidden_dim, args.heads, dropout=0.1, bias=args.biases, include_norm_add=args.norm_add, impl='fast'))
-    attn_layers[idx].cuda()
+    attn_layers[idx].cuda(1)
     attn_layers[idx].half()
     if not args.native :
         attn_layers[idx].reset_parameters()

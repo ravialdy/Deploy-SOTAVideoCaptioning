@@ -300,7 +300,7 @@ class CLIP(nn.Module):
                 heads=vision_heads,
                 input_resolution=image_resolution,
                 width=vision_width
-            ).cuda()
+            )
         else:
 
             vision_heads = vision_width // 64
@@ -312,14 +312,14 @@ class CLIP(nn.Module):
                 heads=vision_heads,
                 output_dim=embed_dim,
                 checkpointing = checkpointing
-            ).cuda()
+            )
 
         self.transformer = Transformer(
             width=transformer_width,
             layers=transformer_layers,
             heads=transformer_heads,
             checkpointing = checkpointing
-        ).cuda()
+        )
 
         self.vocab_size = vocab_size
         self.token_embedding = nn.Embedding(vocab_size, transformer_width)

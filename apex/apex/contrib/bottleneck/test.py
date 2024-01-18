@@ -9,8 +9,8 @@ for stride, o_channel in [(1,32), (1,128), (2,32)]:
     print("testing stride ==", stride, ", in_channel == 32 , out_channel ==", o_channel)
     a_ = torch.randn(17,32,28,28)
 
-    a = a_.cuda().half().to(memory_format=torch.channels_last).requires_grad_()
-    model = Bottleneck(32,8,o_channel,stride=stride).cuda().half().to(memory_format=torch.channels_last)
+    a = a_.cuda(1).half().to(memory_format=torch.channels_last).requires_grad_()
+    model = Bottleneck(32,8,o_channel,stride=stride).cuda(1).half().to(memory_format=torch.channels_last)
 
     # test model
     b = model(a)
@@ -41,8 +41,8 @@ for stride, o_channel in [(1,32), (1,128), (2,32)]:
     for i, (w, wgrad) in enumerate(zip(model.w_conv, wgrads)):
         print("max error wgrad{}:".format(i+1), (wgrad - w.grad.float()).abs().max().item(), "max elem:", wgrad.abs().max().item())
 
-    nhwc_a = a_.permute(0,2,3,1).contiguous().cuda().half().requires_grad_()
-    nhwc_model = Bottleneck(32,8,o_channel,stride=stride,explicit_nhwc=True, use_cudnn=True).cuda().half()
+    nhwc_a = a_.permute(0,2,3,1).contiguous().cuda(1).half().requires_grad_()
+    nhwc_model = Bottleneck(32,8,o_channel,stride=stride,explicit_nhwc=True, use_cudnn=True).cuda(1).half()
     for p,q in zip(model.parameters(), nhwc_model.parameters()):
         # model's storage is already in nhwc, we clone and assign to explicit nhwc model
         q.data.copy_(p.data.permute(0,2,3,1).contiguous())

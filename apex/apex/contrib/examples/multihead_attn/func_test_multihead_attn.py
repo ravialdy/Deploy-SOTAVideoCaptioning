@@ -42,7 +42,7 @@ for seed in range(args.seed_start, args.seed_end+1) :
         ref_layer = EncdecMultiheadAttn(args.hidden_dim, args.heads, dropout=dropout_prob, bias=False, include_norm_add=args.norm_add, impl='default')
     else :
         ref_layer = SelfMultiheadAttn(args.hidden_dim, args.heads, dropout=dropout_prob, bias=False, include_norm_add=args.norm_add, impl='default')
-    ref_layer.cuda()
+    ref_layer.cuda(1)
     ref_layer.half()
     ref_layer.reset_parameters()
 
@@ -71,7 +71,7 @@ for seed in range(args.seed_start, args.seed_end+1) :
         tst_layer = EncdecMultiheadAttn(args.hidden_dim, args.heads, dropout=dropout_prob, bias=False, include_norm_add=args.norm_add, impl='fast')
     else:
         tst_layer = SelfMultiheadAttn(args.hidden_dim, args.heads, dropout=dropout_prob, bias=False, include_norm_add=args.norm_add, impl='fast')
-    tst_layer.cuda()
+    tst_layer.cuda(1)
     tst_layer.half()
     tst_layer.reset_parameters()
 
